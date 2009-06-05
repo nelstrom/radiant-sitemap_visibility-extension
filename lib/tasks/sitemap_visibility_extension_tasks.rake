@@ -22,7 +22,18 @@ namespace :radiant do
           mkdir_p RAILS_ROOT + directory
           cp file, RAILS_ROOT + path
         end
-      end  
+      end
+      
+      desc "Delete all 'no-map' page parts, and mark associated pages as hidden from sitemap"
+      task :mark => :environment do
+        PagePart.find_all_by_name("no-map").each do |target|
+          target.page.update_attributes(:hide_from_sitemap => true)
+          target.destroy
+          print "."
+        end
+        print "\n"
+      end
+      
     end
   end
 end
