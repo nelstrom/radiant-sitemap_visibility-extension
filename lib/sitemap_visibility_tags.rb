@@ -21,4 +21,20 @@ module SitemapVisibilityTags
     tag.expand if tag.locals.page.hide_from_sitemap
   end
   
+  desc %{
+    Renders the contained elements only if the current contextual page has one or
+    more child pages which have not been hidden from the sitemap.
+
+    *Usage:*
+    
+    <pre><code><r:if_children_visible_to_sitemap>...</r:if_children_visible_to_sitemap></code></pre>
+  }
+  tag "if_children_visible_to_sitemap" do |tag|
+    conditions = children_find_options(tag)[:conditions]
+    conditions.first << " and (hide_from_sitemap = ?)"
+    conditions       << 0
+    children = tag.locals.page.children.count(:conditions => conditions)
+    tag.expand if children > 0
+  end
+  
 end
